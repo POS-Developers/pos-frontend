@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build: .
+    container_name: pos_frontend
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env 
+    stdin_open: true
+    tty: true

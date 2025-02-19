@@ -21,3 +21,13 @@ npm run dev
 ```
 
 - This will start the project at ` http://localhost:5173/`.
+
+
+3. For run in Docker and docker-compose install Docker and docker compose in your local 
+
+4. use this commands after installation 
+
+docker-compose up --build -d         #first time
+docker-compose up #                  #after first time
+
+
