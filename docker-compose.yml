@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        - VITE_API_URL=http://3.110.167.179:8000
+    container_name: pos_frontend
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true

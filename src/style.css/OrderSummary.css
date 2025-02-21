@@ -1,0 +1,129 @@
+ .order-summary {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  
+  
+  .order-summary h2 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  
+  .order-summary ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .order-item button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .order-item button:hover {
+    background: #c82333;
+  }
+  
+  .order-summary h3 {
+    text-align: right;
+    margin-top: 10px;
+  }
+  
+  .send-order,
+  .cancel-order {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .send-order {
+    background: #28a745;
+    color: white;
+  }
+  
+  .send-order:hover {
+    background: #218838;
+  }
+  
+  .cancel-order {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .cancel-order:hover {
+    background: #c82333;
+  }
+
+
+  .order-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #28a745;
+    background-color: white;
+    color: #28a745;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease;
+  }
+  
+  .quantity-btn:hover {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .quantity-display {
+    font-size: 18px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  .remove-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s ease;
+  }
+  
+  .remove-btn:hover {
+    background-color: #c82333;
+  }
+  
+   
+
+
+   

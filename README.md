@@ -19,5 +19,4 @@ npm install
 ```js
 npm run dev
 ```
-
-- This will start the project at ` http://localhost:5173/`.
+    - This will start the project at ` http://localhost:5173/`.

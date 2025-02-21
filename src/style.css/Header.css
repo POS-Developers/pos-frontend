@@ -1,0 +1,30 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #343a40;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+  }
+  
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .table-button {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: 10px;
+  }
+  
+  .table-button:hover {
+    background-color: #e0a800;
+  }
+  
