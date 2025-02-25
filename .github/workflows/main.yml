@@ -1,0 +1,44 @@
+name: Frontend Deployment
+
+on:
+  push:
+    branches:
+      - main  # Ensure this matches your branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Main Repository
+        uses: actions/checkout@v4
+
+      - name: Clone pos-frontend Repository
+        run: |
+          git clone https://github.com/POS-Developers/pos-frontend.git
+          ls -l pos-frontend  # Debug to confirm folder exists
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest ./pos-frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/pos-app
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
+            docker stop pos-frontend || true
+            docker rm pos-frontend || true
+            docker run -d -p 5173:5173 --name pos-frontend \
+              ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest

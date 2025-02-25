@@ -15,6 +15,7 @@ const AddDish = () => {
   });
 
   const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,14 +34,14 @@ const AddDish = () => {
     });
 
     try {
-      await axios.post("http://127.0.0.1:8000/Home/Dishes-list/", formData, {
+      await axios.post(`${backendUrl}/Home/Dishes-list/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Dish added successfully!");
+      alert("✅ Dish added successfully!");
       navigate("/");
     } catch (error) {
-      console.error("Error adding dish:", error.response?.data || error.message);
-      alert("Failed to add dish.");
+      console.error("❌ Errorr adding dish:", error.response?.data || error.message);
+      alert("❌ Failed to add dish.");
     }
   };
 

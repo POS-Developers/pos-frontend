@@ -1,7 +1,7 @@
 # POS Restaurant Frontend
 
 - This project is made in React + Vite.
-- This project is about a POS Restaurant Billing.
+- This project is about a POS Restaurant Billing..
 
 ![Project Dashboard](./src/assets/Screenshots/Project%20Dashboard.png)
 

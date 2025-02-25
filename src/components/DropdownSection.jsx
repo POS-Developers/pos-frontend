@@ -1,11 +1,20 @@
 import React from "react";
 import "../style.css/DropdownSection.css";
 
-const DropdownSection = ({ tables, selectedTable, setSelectedTable, employees, selectedEmployee, setSelectedEmployee, order }) => {
+
+
+const DropdownSection = ({ tables, selectedTable, setSelectedTable, setActiveTable, employees, selectedEmployee, setSelectedEmployee, order }) => {
+  
+  const handleTableChange = (e) => {
+    const tableId = e.target.value;
+    setSelectedTable(tableId);
+    setActiveTable(tableId); // ✅ Update activeTable for Order Summary
+  };
+
   return (
     <div className="dropdown-section">
       <label>Select Table:</label>
-      <select value={selectedTable} onChange={(e) => setSelectedTable(e.target.value)}>
+      <select value={selectedTable} onChange={handleTableChange}>
         <option value="">Select Table</option>
         {tables.map((table) => (
           <option key={table.id} value={table.id} disabled={order[table.id]?.length > 0}>
