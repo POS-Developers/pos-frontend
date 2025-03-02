@@ -1,0 +1,14 @@
+.dropdown-section {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .dropdown-section select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
