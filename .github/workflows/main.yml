@@ -18,18 +18,67 @@ jobs:
           git clone https://github.com/POS-Developers/pos-frontend.git
           ls -l pos-frontend  # Debug to confirm folder exists
 
+      # SonarCloud Static Code Analysis
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./pos-frontend
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=src
+            -Dsonar.language=js
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**
+
+      # Send Slack Notification on SonarCloud Failure
+      - name: Send Slack Notification on SonarCloud Failure
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: "🚨 *SonarCloud Analysis Failed!* \nCheck the report: <https://sonarcloud.io/project/issues?id=${{ secrets.SONAR_PROJECT_KEY }}|View Details>"
+          SLACK_COLOR: "#ff0000"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and Push Docker Image
+      - name: Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest ./pos-frontend
+
+      # Run Trivy vulnerability scan
+      - name: Run Trivy Vulnerability Scan
+        id: trivy_scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest"
+          format: "table"
+          exit-code: 1
+          severity: "CRITICAL,HIGH"
+
+      # Send Slack notification if Trivy scan fails
+      - name: Send Slack Notification on Trivy Failure
+        if: failure() && steps.trivy_scan.outcome == 'failure'
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: "🚨 *Trivy Scan Failed!* \nFrontend image has critical vulnerabilities. Check logs: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+          SLACK_COLOR: "#ff0000"
+
+      - name: Push Docker Image (if scan passes)
+        if: success()
+        run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
 
       - name: Deploy to EC2 via SSH
+        if: success()
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -42,3 +91,21 @@ jobs:
             docker rm pos-frontend || true
             docker run -d -p 5173:5173 --name pos-frontend \
               ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
+
+      # Notify Slack on Success
+      - name: Send Slack Notification on Success
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: "✅ *Frontend Deployment Successful!* 🎉\nDeployed on EC2. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+          SLACK_COLOR: "#36a64f"
+
+      # Notify Slack on Failure
+      - name: Send Slack Notification on Failure
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: "⚠️ *Frontend Deployment Failed!* ❌\nCheck logs: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+          SLACK_COLOR: "#ff0000"
