@@ -12,8 +12,7 @@ jobs:
       AWS_REGION: "ap-south-1"
       ECS_CLUSTER: "staging-cluster"
       ECS_SERVICE_FRONTEND: "pos-frontend"
-      BACKEND_URL: "http://65.0.105.80:8000" # Change for production when needed
-
+      VITE_BACKEND_URL: "http://65.0.105.80:8000" # Change for production when needed
     steps:
       # 1️⃣ Checkout this repo
       - name: Checkout repository
@@ -37,7 +36,7 @@ jobs:
         run: |
           cd pos-frontend
           docker build \
-            --build-arg VITE_BACKEND_URL=${{ env.BACKEND_URL }} \
+            --build-arg VITE_BACKEND_URL=${{ env.VITE_BACKEND_URL}} \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
 
