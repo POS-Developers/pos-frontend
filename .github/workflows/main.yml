@@ -3,7 +3,7 @@ name: Deploy Frontend to AWS ECS
 on:
   push:
     branches:
-      - stagings  # Trigger for staging branch
+      - staging  # Trigger for staging branch
 
 jobs:
   deploy:
