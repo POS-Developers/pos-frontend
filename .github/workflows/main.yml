@@ -3,25 +3,24 @@ name: Deploy Frontend to AWS ECS
 on:
   push:
     branches:
-      - staging
-
-env:
-  AWS_REGION: "ap-south-1"
-  ECS_CLUSTER: "staging-cluster"
-  ECS_SERVICE_FRONTEND: "pos-frontend"
-  BACKEND_URL: "http://13.235.91.89:8000"  # Define your backend URL here
+      - stagings  # Trigger for staging branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: "ap-south-1"
+      ECS_CLUSTER: "staging-cluster"
+      ECS_SERVICE_FRONTEND: "pos-frontend"
+      BACKEND_URL: "http://13.235.91.89:8000" # Change for production when needed
 
     steps:
-      # 1️⃣ Checkout the Repository
+      # 1️⃣ Checkout this repo
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      # 2️⃣ Clone pos-frontend Repository
-      - name: Clone pos-frontend Repository
+      # 2️⃣ Clone frontend repository
+      - name: Clone pos-frontend repository
         run: |
           git clone https://github.com/POS-Developers/pos-frontend.git
           ls -l pos-frontend
@@ -33,33 +32,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # 4️⃣ Build & Push Frontend Image with backend URL
+      # 4️⃣ Build & Push image with backend URL injected
       - name: Build and Push Frontend Image
         run: |
           cd pos-frontend
           docker build \
-            --build-arg VITE_API_URL=${{ env.BACKEND_URL }} \
+            --build-arg VITE_BACKEND_URL=${{ env.BACKEND_URL }} \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/pos-frontend:latest
 
-      # 5️⃣ Configure AWS Credentials
+      # 5️⃣ Configure AWS credentials
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # 6️⃣ Force ECS to Pull Latest Frontend Image
+      # 6️⃣ Redeploy ECS service to pull new image
       - name: Force ECS Service Update
         run: |
           aws ecs update-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service ${{ env.ECS_SERVICE_FRONTEND }} \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE_FRONTEND \
             --force-new-deployment
-
-      # 7️⃣ Verify Deployment (optional)
-      - name: Verify Deployment
-        run: |
-          echo "Deployment triggered successfully"
-          echo "Frontend will use backend URL: ${{ env.BACKEND_URL }}"
