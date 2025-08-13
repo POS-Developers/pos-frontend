@@ -3,7 +3,7 @@ name: Deploy Frontend to AWS ECS
 on:
   push:
     branches:
-      - staging  # Trigger for staging branch
+      - stagings  # Trigger for staging branch
 
 jobs:
   deploy:
@@ -12,7 +12,7 @@ jobs:
       AWS_REGION: "ap-south-1"
       ECS_CLUSTER: "staging-cluster"
       ECS_SERVICE_FRONTEND: "pos-frontend"
-      BACKEND_URL: "http://13.235.91.89:8000" # Change for production when needed
+      BACKEND_URL: "http://65.0.105.80:8000" # Change for production when needed
 
     steps:
       # 1️⃣ Checkout this repo
