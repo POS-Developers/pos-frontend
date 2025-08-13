@@ -4,12 +4,15 @@ FROM node:18-alpine
 # Set the working directory
 WORKDIR /app
 
-# Install dependencies more efficientlyw
+# Install dependencies
 COPY package*.json ./
 RUN npm install --frozen-lockfile
 
 # Copy the entire project
 COPY . .
+
+# Build the application with the environment variables
+RUN npm run build
 
 # Expose the port used by Vite (5173)
 EXPOSE 5173
@@ -18,5 +21,5 @@ EXPOSE 5173
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
-# Start the Vite development server and bind to all interfaces
-CMD ["npm", "run", "dev", "--", "--host"]
+# Start the Vite production server
+CMD ["npm", "run", "preview", "--", "--host"]
