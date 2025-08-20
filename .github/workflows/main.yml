@@ -18,7 +18,7 @@ jobs:
           git clone https://github.com/POS-Developers/pos-frontend.git
           ls -l pos-frontend  # Debug to confirm folder exists
 
-      # SonarCloud Static Code Analysis
+      # SonarCloud Static Code Analysiss
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
         env:
